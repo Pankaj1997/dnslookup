@@ -1,6 +1,7 @@
 name: Build and Deploy
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
@@ -45,7 +46,7 @@ jobs:
       run: |
         python -m pytest
   Build_and_push:
-    needs: Lint_Check
+    needs: Testing
     runs-on: ubuntu-latest
 
     steps:
