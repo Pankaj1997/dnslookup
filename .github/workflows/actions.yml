@@ -34,6 +34,7 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
   Build_and_push:
+    needs: Lint_Check
     runs-on: ubuntu-latest
 
     steps:
@@ -48,7 +49,7 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_REF_NAME} ./app
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_REF_NAME} .
         docker push ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_REF_NAME}
 
     - name: Update Helm Chart Version
