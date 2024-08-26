@@ -48,6 +48,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and push Docker image
+      working-directory: ./app
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_REF_NAME} .
         docker push ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_REF_NAME}
