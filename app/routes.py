@@ -62,6 +62,7 @@ def lookup_ipv4():
         log_query("lookup_ipv4", {"domain": domain}, result)
         return jsonify(result), 400
 
+
 # /v1/tools/validate endpoint
 @routes.route('/v1/tools/validate', methods=['GET'])
 def validate_ipv4():
@@ -82,6 +83,7 @@ def validate_ipv4():
         result = {"ip": ip, "valid": False}
         log_query("validate_ipv4", {"ip": ip}, result)
         return jsonify(result), 400
+
 
 # /v1/history endpoint
 @routes.route('/v1/history', methods=['GET'])
@@ -115,10 +117,12 @@ def root():
     log_query("get_APP_version", {}, response)
     return jsonify(response)
 
+
 # /metrics endpoint for Prometheus
 @routes.route('/metrics')
 def metrics():
     return generate_latest()
+
 
 # /health endpoint for health check
 @routes.route('/health', methods=['GET'])
