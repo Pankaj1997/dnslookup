@@ -12,6 +12,10 @@ A Flask-based microservice for DNS lookup and IP validation with MongoDB integra
 
 ### Manual Installation
 ```
+export APP_VERSION=<AppVersion>
+export MONGO_URI=<mongoUri in the format mongodb://user:pass@localhost:27017/>
+export DB_NAME=<DB_NAME>
+export COLLECTION_NAME=<COLLECTION_NAME>
 pip install -r requirements.txt
 python app.py
 ```
@@ -122,7 +126,10 @@ Response:
 The following environment variables are used:
 
 MONGO_URI: The URI for connecting to MongoDB.
+
 DB_NAME: The name of the MongoDB database.
+
 COLLECTION_NAME: The name of the MongoDB collection.
+
 APP_VERSION: The version of the application.
 

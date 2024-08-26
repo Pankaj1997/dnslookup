@@ -3,17 +3,16 @@ import ipaddress
 import dns.resolver
 from pymongo import MongoClient, DESCENDING
 import os
-from prometheus_client import generate_latest, Counter
+from prometheus_client import generate_latest
 import time
 import datetime
-import requests
 
 # Create a Blueprint for the routes
 routes = Blueprint('routes', __name__)
 
-#env
+# env
 APP_VERSION = os.getenv('APP_VERSION', '0.1.0')
-MONGO_URI = os.getenv('MONGO_URI', 'mongodb://root:c67vBNh24dWE@localhost:51903/')
+MONGO_URI = os.getenv('MONGO_URI', 'mongodb://root:c67vBNh24dWE@localhost:27017/')
 DB_NAME = os.getenv('DB_NAME', 'domain_lookup')
 DB_NAME = os.getenv('COLLECTION_NAME', 'queries')
 
@@ -22,9 +21,12 @@ client = MongoClient(MONGO_URI)
 db = client['domain_lookup']
 collection = db['queries']
 
+
 def cleanup():
     print("Performing cleanup...")
     client.close()
+
+
 def log_query(api_name, query_param, result):
     """Logs the query details in MongoDB."""
     log_entry = {
@@ -40,7 +42,7 @@ def log_query(api_name, query_param, result):
 @routes.route('/v1/tools/lookup', methods=['GET'])
 def lookup_ipv4():
     domain = request.args.get('domain')
-    
+
     if not domain:
         result = {"error": "Please provide a domain parameter."}
         log_query("lookup_ipv4", {"domain": domain}, result)
@@ -64,7 +66,7 @@ def lookup_ipv4():
 @routes.route('/v1/tools/validate', methods=['GET'])
 def validate_ipv4():
     ip = request.args.get('ip')
-    
+
     if not ip:
         result = {"error": "Please provide an ip parameter."}
         log_query("validate_ipv4", {"ip": ip}, result)
@@ -86,7 +88,7 @@ def validate_ipv4():
 def get_history():
     # Retrieve the latest 20 queries, sorted by the most recent first
     history = list(collection.find().sort("_id", DESCENDING).limit(20))
-    
+
     # Convert ObjectId to string for JSON serialization
     for entry in history:
         entry['_id'] = str(entry['_id'])
@@ -95,11 +97,12 @@ def get_history():
     log_query("get_history", {}, result)
     return jsonify(history)
 
+
 @routes.route('/', methods=['GET'])
 def root():
     # Get current UNIX epoch time
     current_time = int(time.time())
-    
+
     # Check if the application is running in Kubernetes
     is_kubernetes = os.getenv('KUBERNETES_SERVICE_HOST') is not None
 
