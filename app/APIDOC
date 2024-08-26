@@ -1,0 +1,118 @@
+API Documentation
+
+1. Root Endpoint (/)
+Description: Provides application version, current UNIX timestamp, and Kubernetes status.
+
+Method: GET
+Sample Response:
+{
+  "version": "0.2.0",
+  "date": 1663534325,
+  "kubernetes": false
+}
+version: The version of the application (from APP_VERSION environment variable).
+date: The current date in UNIX epoch format.
+kubernetes: A boolean indicating if the application is running under Kubernetes (from KUBERNETES environment variable).
+
+2. Lookup Endpoint (/v1/tools/lookup)
+Description: Resolves the IPv4 addresses for a given domain.
+
+Method: GET
+
+Parameters:
+
+domain (query parameter): The domain name to resolve.
+Responses:
+
+Status: 200 
+Sample Output:
+{
+  "domain": "example.com",
+  "ipv4_addresses": ["93.184.216.34"]
+}
+
+Status: 400 Bad Request
+{
+  "error": "Please provide a domain parameter."
+}
+or
+{
+  "error": "DNS resolution error details"
+}
+Details:
+
+Logs all successful queries with timestamp, API name, query parameter, and result in MongoDB.
+3. Validate Endpoint (/v1/tools/validate)
+Description: Validates if the input is an IPv4 address.
+
+Method: GET
+
+Parameters:
+
+ip (query parameter): The IP address to validate.
+Responses:
+
+Status:200 OK
+{
+  "ip": "192.168.1.1",
+  "valid": true
+}
+
+Status:400 Bad Request
+
+{
+  "error": "Please provide an ip parameter."
+}
+or
+
+{
+  "ip": "300.300.300.300",
+  "valid": false
+}
+
+4. History Endpoint (/v1/history)
+Description: Retrieves the latest 20 saved queries from the database.
+
+Method: GET
+
+Responses:
+
+Status: 200 OK
+
+[
+  {
+    "_id": "64eb7e7ffcd84c9f91a88c9d",
+    "timestamp": "2024-08-25T14:55:32.123456",
+    "api_name": "lookup_ipv4",
+    "query_param": {"domain": "example.com"},
+    "result": {"domain": "example.com", "ipv4_addresses": ["93.184.216.34"]}
+  },
+  // More entries...
+]
+
+5. Metrics Endpoint (/metrics)
+Description: Provides Prometheus metrics.
+
+Method: GET
+
+Responses:
+
+Status: 200 OK
+Details:
+Exposes metrics for Prometheus monitoring, including any custom metrics defined in your application.
+
+6. Health Endpoint (/health)
+Description: Provides the health status of the application.
+
+Method: GET
+
+Responses:
+
+Status: 200 OK
+
+{
+  "status": "healthy"
+}
+
+Returns a simple status to indicate if the application is healthy.
+

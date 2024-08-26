@@ -1,0 +1,6 @@
+Flask==2.2.5
+dnspython==2.6.1
+pymongo==4.8.0
+prometheus_client==0.20.0
+flask-restx
+requests
