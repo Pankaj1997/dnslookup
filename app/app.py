@@ -1,11 +1,8 @@
 from flask import Flask
-from routes import routes  # Import the routes Blueprint
+from routes import routes,cleanup  # Import the routes Blueprint
 import signal
 import sys
 
-
-def cleanup():
-    print("Performing cleanup...")
 
 
 def graceful_shutdown(signum, frame):
