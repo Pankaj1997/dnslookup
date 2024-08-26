@@ -11,7 +11,9 @@ services:
       - ./mongo_data:/data/db
 
   app:
-    image: pankaj2212/dnslookup:0.2.0
+    image: dnslookup:latest
+    build: .
+    context: ../app
     environment:
       MONGO_URI: "mongodb://root:c67vBNh24dWE@mongodb:27017/"
       DB_NAME: "domain_lookup"
