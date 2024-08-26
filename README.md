@@ -3,10 +3,23 @@
 A Flask-based microservice for DNS lookup and IP validation with MongoDB integration. Provides RESTful APIs to resolve domains, validate IPs, and log query history.
 
 ## Table of Contents
+- [Configuration](#configuration)
 - [Installation](#installation)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
-- [Configuration](#configuration)
+
+
+## Configuration
+The following environment variables are used:
+
+MONGO_URI: The URI for connecting to MongoDB.
+
+DB_NAME: The name of the MongoDB database.
+
+COLLECTION_NAME: The name of the MongoDB collection.
+
+APP_VERSION: The version of the application.
+
 
 ## Installation
 
@@ -27,7 +40,7 @@ cd docker-setup
 docker-compose up -d
 ```
 
-### Using Kubernetes & helm
+### Manually packaging helm and Using Kubernetes
 Substitute appVersion and namespace in the bellow-snippet.
 ```
 cd kubernetes-setup
@@ -41,6 +54,14 @@ export CONTAINER_PORT=$(kubectl get pod --namespace iocl-uat-uat $POD_NAME -o js
 echo "Visit http://127.0.0.1:8080 to use your application"
 
 kubectl --namespace <namespace> port-forward $POD_NAME 8080:$CONTAINER_PORT
+```
+
+### Using Build Artifacts
+Please make sure that you have the build artifacts downloaded and unzipped in your working directory. File format for artifacts: dnslookup-{appVersion}.tar.gz Substitute the appVersion, release-name and ingress-ip in the below-mentioned snippet.
+```
+helm install <release-name> dnslookup-<appVersion>.tgz -n <namespace>
+echo "<ingress-ip> myapp.local" >> /etc/hosts
+curl http://myapp.local/health
 ```
 
 ## Usage
@@ -121,15 +142,4 @@ Response:
   "status": "healthy"
 }
 ```
-
-## Configuration
-The following environment variables are used:
-
-MONGO_URI: The URI for connecting to MongoDB.
-
-DB_NAME: The name of the MongoDB database.
-
-COLLECTION_NAME: The name of the MongoDB collection.
-
-APP_VERSION: The version of the application.
 
