@@ -48,9 +48,8 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and push Docker image
-      working-directory: ./app
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_REF_NAME} .
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_REF_NAME} ./app
         docker push ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_REF_NAME}
 
     - name: Update Helm Chart Version
