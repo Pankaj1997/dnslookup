@@ -2,15 +2,14 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  Lint_Check:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +33,10 @@ jobs:
       run: |
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+  Build_and_push:
+    runs-on: ubuntu-latest
 
+    steps:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
@@ -46,13 +48,13 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_SHA::8} ./app
-        docker push ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_SHA::8}
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_REF_NAME} ./app
+        docker push ${{ secrets.DOCKER_USERNAME }}/dnslookup:${GITHUB_REF_NAME}
 
     - name: Update Helm Chart Version
       working-directory: ./kubernetes-setup/dnslookup-helm
       run: |
-        sed -i "s/^version:.*/version: ${GITHUB_SHA::8}/" Chart.yaml
+        sed -i "s/^version:.*/version: ${GITHUB_REF_NAME}/" Chart.yaml
 
     - name: Package Helm Chart
       working-directory: ./kubernetes-setup/dnslookup-helm
